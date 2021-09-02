@@ -24,6 +24,15 @@ namespace MiniBoard
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            // DI 의존성 주입
+
+            // Session
+            services.AddSession(); // 세션에 대한 기능 추가
+            // Identity
+
+            // Web API 관련 기능
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +50,7 @@ namespace MiniBoard
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();
