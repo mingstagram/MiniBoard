@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PagedList;
 
 namespace MiniBoard.Controllers
 {
@@ -15,7 +16,7 @@ namespace MiniBoard.Controllers
         ///  게시판 리스트
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index()
+        public IActionResult Index(string searchString)
         {
             if (HttpContext.Session.GetInt32("USER_LOGIN_KEY") == null)
             {
@@ -25,15 +26,23 @@ namespace MiniBoard.Controllers
 
             using (var db = new MiniBoardDbContext())
             {
-                var list = db.Boards.ToList();
-                return View(list);
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    var list = db.Boards.ToList().OrderByDescending(n => n.NoteNo).Where(s => s.NoteTitle.Contains(searchString));
+                    return View(list);
+                }
+                else
+                {
+                    var list = db.Boards.ToList().OrderByDescending(n => n.NoteNo);
+                    return View(list);
+                }
             }
         }
 
         /// <summary>
         /// 게시판 상세
         /// </summary>
-        /// <param name="boardNo"></param>
+        /// <param name="NoteNo"></param>
         /// <returns></returns>
         public IActionResult Detail(int NoteNo)
         {

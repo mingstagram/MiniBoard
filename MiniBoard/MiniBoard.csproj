@@ -18,7 +18,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="PagedList.Mvc" Version="4.5.0" />
     <PackageReference Include="Trumbowyg" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\upload\" />
   </ItemGroup>
 
 </Project>

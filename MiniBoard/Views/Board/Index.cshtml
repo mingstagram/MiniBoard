@@ -1,5 +1,11 @@
 ﻿<div class="container">
-    <table class="table table-bordered">
+    <form class="form-inline" style="margin-bottom:10px; float:right;" method="get" asp-controller="Board" asp-action="Index">
+        <div class="form-inline">
+            <input class="form-control" type="text" name="searchString" />
+            <input class="btn btn-primary" style="margin-left:5px;" type="submit" value="검색" />
+        </div>
+    </form>
+    <table class="table table-bordered" style="margin-bottom: 10px;">
         <thead>
             <tr style="text-align:center;">
                 <th style="width:10%;">번호</th>
@@ -24,6 +30,5 @@
 
         </tbody>
     </table>
-
-    <a class="btn btn-warning" asp-controller="Board" asp-action="Add">게시물 작성</a>
+    <a class="btn btn-info" asp-controller="Board" asp-action="Add">게시물 작성</a>
 </div>
