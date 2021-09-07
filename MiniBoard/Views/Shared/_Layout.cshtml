@@ -19,7 +19,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1" style="justify-content: space-between; ">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Board" asp-action="Index">게시판</a>
                         </li>
@@ -27,9 +27,6 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">로그인</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">회원가입</a>
                             </li>
                         }
                         else
