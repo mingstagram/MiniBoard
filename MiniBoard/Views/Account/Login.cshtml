@@ -35,19 +35,43 @@
         <div class="card-header" style="text-align: center;">SNS 로그인</div>
         <div class="card-body text-center">
             <div class="form-group">
-                <a class="btn btn-primary btn-block" href="https://www.facebook.com/v11.0/dialog/oauth?client_id=583538316016215&redirect_uri=https://localhost:44335/Auth/Facebook&state=MiniBoard">
+                <a class="btn btn-primary btn-block" @*onclick="facebook();"*@ href="https://www.facebook.com/v11.0/dialog/oauth?client_id=583538316016215&redirect_uri=https://localhost:44335/Auth/Facebook&state=MiniBoard">
                     Login with Facebook</a>
             </div>
             <div class="form-group">
-                <a class="btn btn-warning btn-block" href="https://kauth.kakao.com/oauth/authorize?client_id=14e39f5a6a7f6927aa4e09c080412b70&redirect_uri=https://localhost:44335/Auth/Kakao&response_type=code">
+                <a class="btn btn-warning btn-block" @*onclick="kakao();"*@  href="https://kauth.kakao.com/oauth/authorize?client_id=14e39f5a6a7f6927aa4e09c080412b70&redirect_uri=https://localhost:44335/Auth/Kakao&response_type=code">
                     Login with Kakao</a>
             </div>
             <div class="form-group">
-                <a class="btn btn-success btn-block" href="#">Login with Naver</a>
+                <a class="btn btn-success btn-block" @*onclick="naver();"*@  href="https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=rkJVWpw9SnIp_BGS2RY0&redirect_uri=https://localhost:44335/Auth/Naver&state=MiniBoard">
+                    Login with Naver</a>
             </div>
             <div class="form-group">
-                <a class="btn btn-light btn-block" href="#">Login with Google</a>
+                <a class="btn btn-light btn-block" @*onclick="google();"*@ href="https://accounts.google.com/o/oauth2/v2/auth?client_id=499968768539-cl72v6r3v829e3lq6kkqltkqjcbmisih.apps.googleusercontent.com&response_type=code&redirect_uri=https://localhost:44335/Auth/Google&scope=https://www.googleapis.com/auth/userinfo.email">
+                    Login with Google</a>
             </div>
         </div>
     </div>
 </div>
+@*<script type="text/javascript">
+    function facebook() {
+        $.ajax({
+            type: "GET",
+            url: "https://www.facebook.com/v11.0/dialog/oauth",
+            data: {
+                "client_id": "583538316016215",
+                "redirect_uri": "https://localhost:44335/Auth/Facebook",
+                "state": "MiniBoard"
+            }
+        }).done(res => {
+            console.log(res);
+        }).fail(error => {
+            console.log(error);
+            alert("sns 로그인 실패!");
+        });
+
+
+
+
+    }
+</script>*@

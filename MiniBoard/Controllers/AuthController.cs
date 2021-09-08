@@ -12,15 +12,16 @@ using MiniBoard.Models;
 using MiniBoard.DataContext;
 using Microsoft.AspNetCore.Http;
 using MiniBoard.Models.Dto.Kakao;
+using MiniBoard.Models.Dto.Naver;
+using MiniBoard.Models.Dto.Google;
 
 namespace MiniBoard.Controllers
 {
     public class AuthController : Controller
     {
         /// <summary>
-        /// 페이스북 로그인
+        /// 페이스북 회원가입 및 로그인
         /// </summary>
-        /// <param name="code"></param>
         /// <returns></returns>
         [HttpGet]
         public IActionResult Facebook(string code)
@@ -96,9 +97,8 @@ namespace MiniBoard.Controllers
         }
 
         /// <summary>
-        /// 카카오톡 로그인
+        /// 카카오 회원가입 및 로그인
         /// </summary>
-        /// <param name="code"></param>
         /// <returns></returns>
         public IActionResult Kakao(string code)
         {
@@ -165,7 +165,146 @@ namespace MiniBoard.Controllers
 
         }
 
+        /// <summary>
+        /// 네이버 회원가입 및 로그인
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Naver(string code, string state)
+        {
+            string baseurl = "https://nid.naver.com";
+            string tokenReqPath = "/oauth2.0/token";
+            string dataReqPath = "/v1/nid/me";
 
+            var client = new RestClient(baseurl);
+
+            // 토큰 요청 로직
+            var tokenReq = new RestRequest(tokenReqPath, Method.GET);
+            tokenReq.AddParameter("grant_type", "authorization_code");
+            tokenReq.AddParameter("client_id", "rkJVWpw9SnIp_BGS2RY0");
+            tokenReq.AddParameter("client_secret", "kv8bqREpiu");
+            tokenReq.AddParameter("code", code);
+            tokenReq.AddParameter("state", state);
+
+            var tokenRes = client.Execute(tokenReq);
+
+            var tokenJsonValue = JObject.Parse(tokenRes.Content).ToString();
+            NaverTokenVo naverToken = null;
+            naverToken = JsonConvert.DeserializeObject<NaverTokenVo>(tokenJsonValue);
+
+            // 회원 프로필 조회
+
+            baseurl = "https://openapi.naver.com";
+            client = new RestClient(baseurl);
+            var dataReq = new RestRequest(dataReqPath, Method.GET);
+            dataReq.AddHeader("Authorization", "Bearer " + naverToken.access_token);
+
+            var dataRes = client.Execute(dataReq);
+
+            var dataJsonValue = JObject.Parse(dataRes.Content).ToString();
+            NaverUserVo naverUser = null;
+            naverUser = JsonConvert.DeserializeObject<NaverUserVo>(dataJsonValue);
+            var naverUserId = "Naver_" + naverUser.response.id.Split("_")[0]; 
+            var naverUserPassword = naverUser.response.id.Split("_")[0]; // id로 임시 비밀번호 설정 
+
+            // 가입 되어있는 사용자 일경우 자동 로그인
+            using (var db = new MiniBoardDbContext())
+            {
+                var user = db.Users
+                    .FirstOrDefault(u => u.UserId.Equals(naverUserId) &&
+                                                            u.UserPassword.Equals(naverUserPassword));
+
+                if (user != null)
+                {
+                    // 로그인 성공
+                    // HttpContext.Session.SetInt32(key, value);
+                    HttpContext.Session.SetInt32("USER_LOGIN_KEY", user.UserNo);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    // 가입되지 않은 사용자 일 경우 sns 간편 회원가입 페이지로 이동
+                    TempData["UserId"] = naverUserId;
+                    TempData["UserPassword"] = naverUserPassword;
+                    TempData["Oauth"] = "Naver";
+                    return RedirectToAction("SnsRegister", "Auth");
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// 구글 회원가입 및 로그인
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Google(string code)
+        {
+            string baseurl = "https://oauth2.googleapis.com";
+            string tokenReqPath = "/token";
+            string dataReqPath = "/oauth2/v1/userinfo";
+
+            var client = new RestClient(baseurl);
+
+            // 토큰 요청 로직
+            var tokenReq = new RestRequest(tokenReqPath, Method.POST);
+            tokenReq.AddHeader("Content-type", "application/x-www-form-urlencoded");
+            tokenReq.AddParameter("client_id", "499968768539-cl72v6r3v829e3lq6kkqltkqjcbmisih.apps.googleusercontent.com");
+            tokenReq.AddParameter("client_secret", "q44h8C3fyYkcxX-nAY5i38pY");
+            tokenReq.AddParameter("code", code);
+            tokenReq.AddParameter("grant_type", "authorization_code");
+            tokenReq.AddParameter("redirect_uri", "https://localhost:44335/Auth/Google");
+
+            var tokenRes = client.Execute(tokenReq);
+
+            var tokenJsonValue = JObject.Parse(tokenRes.Content).ToString();
+
+            GoogleTokenVo googleToken = null;
+            googleToken = JsonConvert.DeserializeObject<GoogleTokenVo>(tokenJsonValue);
+
+            // 사용자 정보 요청 로직
+            baseurl = "https://www.googleapis.com";
+            client = new RestClient(baseurl);
+
+            var dataReq = new RestRequest(dataReqPath, Method.GET);
+            dataReq.AddHeader("Authorization", "Bearer " + googleToken.access_token);
+
+            var dataRes = client.Execute(dataReq);
+
+            var dataJsonValue = JObject.Parse(dataRes.Content).ToString();
+
+            GoogleUserVo googleUser = null;
+            googleUser = JsonConvert.DeserializeObject<GoogleUserVo>(dataJsonValue);
+            var googleUserId = "Google_" + googleUser.id;
+            var googleUserPassword = googleUser.id;
+
+            // 가입 되어있는 사용자 일경우 자동 로그인
+            using (var db = new MiniBoardDbContext())
+            {
+                var user = db.Users
+                    .FirstOrDefault(u => u.UserId.Equals(googleUserId) &&
+                                                            u.UserPassword.Equals(googleUserPassword));
+                if (user != null)
+                {
+                    // 로그인 성공
+                    // HttpContext.Session.SetInt32(key, value);
+                    HttpContext.Session.SetInt32("USER_LOGIN_KEY", user.UserNo);
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    // 가입되지 않은 사용자 일 경우 sns 간편 회원가입 페이지로 이동
+                    TempData["UserId"] = googleUserId;
+                    TempData["UserPassword"] = googleUserPassword;
+                    TempData["Oauth"] = "Google";
+                    return RedirectToAction("SnsRegister", "Auth");
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// sns 간편 회원가입
+        /// </summary>
+        /// <returns></returns>
         public IActionResult SnsRegister()
         {
             return View();
@@ -174,7 +313,7 @@ namespace MiniBoard.Controllers
         [HttpPost]
         public IActionResult SnsRegister(User model)
         {
-            model.CreateDate = DateTime.Now;
+            model.CreateDate = (DateTime) DateTime.Now;
             // 회원 가입 후 로그인
             if (ModelState.IsValid)
             {
