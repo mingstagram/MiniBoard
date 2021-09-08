@@ -24,16 +24,30 @@ namespace MiniBoard.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IActionResult Facebook(string code)
+        public IActionResult Facebook(string code, string state)
         {
             // 요청을 보내는 URI 
             string baseurl = "https://graph.facebook.com";
+            string loginurl = "https://www.facebook.com";
             string tokenReqPath = "/v11.0/oauth/access_token";
+            string loginReqPath = "/v11.0/dialog/oauth";
             string client_id = "583538316016215";
             string redirect_uri = "https://localhost:44335/Auth/Facebook";
             string client_secret = "dd3c262f17f0e32ff5d019a7738457f2";
             string debugReqPath = "/debug_token";
             string userReqPath = "/me";
+
+            // 로그인 요청 로직
+            // "https://www.facebook.com/v11.0/dialog/oauth?client_id=583538316016215&redirect_uri=https://localhost:44335/Auth/Facebook&state=MiniBoard"
+            //var client = new RestClient(loginurl);
+            //var loginReq = new RestRequest(loginReqPath, Method.GET);
+            //loginReq.AddParameter("client_id", client_id);
+            //loginReq.AddParameter("redirect_uri", redirect_uri);
+            //loginReq.AddParameter("state", "MiniBoard");
+
+            //var loginRes = client.Execute(loginReq);
+            //var loginJsonValue = loginRes.Content.ToString();
+            //string code = null;
 
             // 토큰 요청 로직
             var client = new RestClient(baseurl);
@@ -105,14 +119,16 @@ namespace MiniBoard.Controllers
             string baseurl = "https://kauth.kakao.com";
             string tokenReqPath = "/oauth/token";
             string dataReqPath = "/v2/user/me";
+            string client_id = "14e39f5a6a7f6927aa4e09c080412b70";
+            string redirect_uri = "https://localhost:44335/Auth/Kakao";
 
             // 토큰 요청 로직
             var client = new RestClient(baseurl);
             var tokenReq = new RestRequest(tokenReqPath, Method.POST);
             tokenReq.AddHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
             tokenReq.AddParameter("grant_type", "authorization_code");
-            tokenReq.AddParameter("client_id", "14e39f5a6a7f6927aa4e09c080412b70");
-            tokenReq.AddParameter("redirect_uri", "https://localhost:44335/Auth/Kakao");
+            tokenReq.AddParameter("client_id", client_id);
+            tokenReq.AddParameter("redirect_uri", redirect_uri);
             tokenReq.AddParameter("code", code);
 
             var tokenRes = client.Execute(tokenReq);
@@ -174,14 +190,17 @@ namespace MiniBoard.Controllers
             string baseurl = "https://nid.naver.com";
             string tokenReqPath = "/oauth2.0/token";
             string dataReqPath = "/v1/nid/me";
+            string client_id = "rkJVWpw9SnIp_BGS2RY0";
+            string redirect_uri = "https://localhost:44335/Auth/Kakao";
+            string client_secret = "kv8bqREpiu";
 
             var client = new RestClient(baseurl);
 
             // 토큰 요청 로직
             var tokenReq = new RestRequest(tokenReqPath, Method.GET);
             tokenReq.AddParameter("grant_type", "authorization_code");
-            tokenReq.AddParameter("client_id", "rkJVWpw9SnIp_BGS2RY0");
-            tokenReq.AddParameter("client_secret", "kv8bqREpiu");
+            tokenReq.AddParameter("client_id", client_id);
+            tokenReq.AddParameter("client_secret", client_secret);
             tokenReq.AddParameter("code", code);
             tokenReq.AddParameter("state", state);
 
@@ -241,17 +260,20 @@ namespace MiniBoard.Controllers
             string baseurl = "https://oauth2.googleapis.com";
             string tokenReqPath = "/token";
             string dataReqPath = "/oauth2/v1/userinfo";
+            string client_id = "499968768539-cl72v6r3v829e3lq6kkqltkqjcbmisih.apps.googleusercontent.com";
+            string redirect_uri = "https://localhost:44335/Auth/Google";
+            string client_secret = "q44h8C3fyYkcxX-nAY5i38pY";
 
             var client = new RestClient(baseurl);
 
             // 토큰 요청 로직
             var tokenReq = new RestRequest(tokenReqPath, Method.POST);
             tokenReq.AddHeader("Content-type", "application/x-www-form-urlencoded");
-            tokenReq.AddParameter("client_id", "499968768539-cl72v6r3v829e3lq6kkqltkqjcbmisih.apps.googleusercontent.com");
-            tokenReq.AddParameter("client_secret", "q44h8C3fyYkcxX-nAY5i38pY");
+            tokenReq.AddParameter("client_id", client_id);
+            tokenReq.AddParameter("client_secret", client_secret);
             tokenReq.AddParameter("code", code);
             tokenReq.AddParameter("grant_type", "authorization_code");
-            tokenReq.AddParameter("redirect_uri", "https://localhost:44335/Auth/Google");
+            tokenReq.AddParameter("redirect_uri", redirect_uri);
 
             var tokenRes = client.Execute(tokenReq);
 
