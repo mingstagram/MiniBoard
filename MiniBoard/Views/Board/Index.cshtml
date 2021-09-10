@@ -1,7 +1,17 @@
-﻿<div class="container">
+﻿@model X.PagedList.IPagedList<MiniBoard.Models.Board>
+@using PagedList.Core.Mvc; 
+@using X.PagedList.Mvc.Core;
+
+<link href="~/css/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{ 
+    ViewBag.Title = "Board";
+}
+
+<div class="container">
     <form class="form-inline" style="margin-bottom:10px; float:right;" method="get" asp-controller="Board" asp-action="Index">
         <div class="form-inline">
-            <input class="form-control" type="text" name="searchString" />
+            <input class="form-control" type="text" name="searchString" value="@(ViewBag.CurrentFilter as string)" />
             <input class="btn btn-primary" style="margin-left:5px;" type="submit" value="검색" />
         </div>
     </form>
@@ -30,5 +40,16 @@
 
         </tbody>
     </table>
-    <a class="btn btn-info" asp-controller="Board" asp-action="Add">게시물 작성</a>
+    <div class="form-inline" style="justify-content: space-between;">
+        <a class="btn btn-info" asp-controller="Board" asp-action="Add">게시물 작성</a>
+        @*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount*@
+
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }),
+            new X.PagedList.Web.Common.PagedListRenderOptions
+            {
+                LiElementClasses = new string[] { "page-item" },
+                PageClasses = new string[] { "page-link" }
+            })
+    </div>
 </div>
+<br/>

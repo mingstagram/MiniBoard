@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PagedList;
+using X.PagedList;
+using X.PagedList.Mvc.Core;
 
 namespace MiniBoard.Controllers
 {
@@ -16,7 +17,7 @@ namespace MiniBoard.Controllers
         ///  게시판 리스트
         /// </summary>
         /// <returns></returns>
-        public IActionResult Index(string searchString)
+        public IActionResult Index(string searchString, string currentFilter, int? page)
         {
             if (HttpContext.Session.GetInt32("USER_LOGIN_KEY") == null)
             {
@@ -24,17 +25,31 @@ namespace MiniBoard.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
+            if(searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+
             using (var db = new MiniBoardDbContext())
             {
+                int pageSize = 3;
+                int pageNumber = (page ?? 1);
                 if (!String.IsNullOrEmpty(searchString))
                 {
                     var list = db.Boards.ToList().OrderByDescending(n => n.NoteNo).Where(s => s.NoteTitle.Contains(searchString));
-                    return View(list);
+                    return View(list.ToPagedList(pageNumber, pageSize));
                 }
                 else
                 {
                     var list = db.Boards.ToList().OrderByDescending(n => n.NoteNo);
-                    return View(list);
+                    return View(list.ToPagedList(pageNumber, pageSize));
                 }
             }
         }
