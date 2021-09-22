@@ -1,10 +1,11 @@
-﻿
+﻿@model MiniBoard.Views.ViewModel.BoardReplyModel;
+
 <div class="container card">
     <div class="card-body">
         <a asp-controller="Board" asp-action="Index" class="btn btn-info">돌아가기</a>
     </div>
     <div class="card-header">
-        글번호 : <span>@Model.NoteNo</span> | 작성자 : <span>@Model.UserNo</span>
+        글번호 : <span>@Model.Board.NoteNo</span> | 작성자 : <span>@Model.Board.UserNo</span>
         <span style="float: right;">
             <span id="blike">
                 추천 : @*@Model.Like*@ 0
@@ -12,25 +13,27 @@
         </span>
     </div>
     <div class="form-group card-body" style="height: 20px;">
-        <h3>@Model.NoteTitle</h3>
+        <h3>@Model.Board.NoteTitle</h3>
     </div>
     <hr />
     <div class="form-group card-body">
-        <div>@Html.Raw(Model.NoteContents)</div>
+        <div>@Html.Raw(Model.Board.NoteContents)</div>
     </div>
     <br /> <br /> <br />
-                  <div style="margin: 10px;">
-                      <button type="button" class="btn btn-Light" @*onclick="index.like()"*@ style="border: 1px solid black;">
-                          ❤ 공감
-                      </button>
-                      @*<button type="button" class="btn btn-Light" onclick="index.like()"
-                              style="border: 1px solid black;">
-                          🤍 ${board.blike}
-                      </button>*@
-                  </div>
+    <div style="margin: 10px;">
+        <button type="button" class="btn btn-Light" @*onclick="index.like()"*@ style="border: 1px solid black;">
+            ❤ 공감
+        </button>
+        @*<button type="button" class="btn btn-Light" onclick="index.like()"
+                    style="border: 1px solid black;">
+                🤍 ${board.blike}
+            </button>*@
+    </div>
     <div class="card" style="margin-bottom: 20px;">
         <div class="card">
             <form>
+                <input type="hidden" id="userNo" value="@ViewBag.UserNo" />
+                <input type="hidden" id="boardNo" value="@Model.Board.NoteNo" />
                 <div class="card-body">
                     <textarea id="reply-content" class="form-control" rows="1"></textarea>
                 </div>
@@ -43,20 +46,56 @@
         <div class="card">
             <div class="card-header">댓글 리스트</div>
             <ul id="reply-box" class="list-group">
-                <li class="list-group-item d-flex justify-content-between">
-                    <div>댓글 내용</div>
-                    <div class="d-flex">
-                        <div class="font-italic">
-                            작성자 : 테스터1
-                            &nbsp;
+
+                @foreach (var reply in Model.Reply)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div>@reply.ReplyContents</div>
+                        <div class="d-flex">
+                            <div class="font-italic">
+                                작성자 : @reply.UserNo
+                                &nbsp;
+                            </div>
+                            <button onclick="index.replyDelete(${board.id}, ${reply.id})"
+                                    class="badge">
+                                삭제
+                            </button>
                         </div>
-                        <button onclick="index.replyDelete(${board.id}, ${reply.id})"
-                                class="badge">
-                            삭제
-                        </button>
-                    </div>
-                </li>
+                    </li>
+                }
+
+
             </ul>
         </div>
     </div>
 </div>
+
+
+<script language="javascript" type="text/javascript">
+    var reply = document.getElementById("btn-reply-save");
+    reply.onclick = function () {
+        let data = {
+            UserNo: parseInt($("#userNo").val()),
+            BoardNo: parseInt($("#boardNo").val()),
+            ReplyContents: $("#reply-content").val()
+        };
+        console.log(data);
+
+        $.ajax({
+            method: "POST",
+            url: `/api/Reply/Save`,
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(res => {
+            // 성공
+            alert("댓글 작성이 완료되었습니다.");
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+        }).fail(error => {
+            // 실패
+            alert("댓글 작성이 실패했습니다.");
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+            console.log(error);
+        });
+    };
+</script>

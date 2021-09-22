@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using javax.jws;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MiniBoard.DataContext;
 using MiniBoard.Models;
+using MiniBoard.Models.Dto.Reply;
+using MiniBoard.Views.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +28,7 @@ namespace MiniBoard.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            if(searchString != null)
+            if (searchString != null)
             {
                 page = 1;
             }
@@ -39,7 +42,7 @@ namespace MiniBoard.Controllers
 
             using (var db = new MiniBoardDbContext())
             {
-                int pageSize = 3;
+                int pageSize = 5;
                 int pageNumber = (page ?? 1);
                 if (!String.IsNullOrEmpty(searchString))
                 {
@@ -66,10 +69,20 @@ namespace MiniBoard.Controllers
                 // 로그인이 안된 상태
                 return RedirectToAction("Login", "Account");
             }
+            ViewBag.UserNo = HttpContext.Session.GetInt32("USER_LOGIN_KEY");
+            
             using (var db = new MiniBoardDbContext())
             {
+                // 기존에 한개의 board 모델만 보내는 방식에서
+                // ViewModel을 추가해서 Board모델과 Reply모델을 보내는데 
+                // Reply모델의 경우 board모델과는 달리 IEnumerable<List> 방식으로 보내야하기때문에
+                // ViewModel을 추가할때 IEnumerable<List>로 설정
                 var board = db.Boards.FirstOrDefault(b => b.NoteNo.Equals(NoteNo));
-                return View(board);
+                var replyList = db.Replys.ToList().OrderByDescending(r => r.BoardNo).Where(r => r.BoardNo.Equals(NoteNo));
+                BoardReplyModel boardReply = new BoardReplyModel();
+                boardReply.Board = board;
+                boardReply.Reply = replyList;
+                return View(boardReply);
             }
         }
 
