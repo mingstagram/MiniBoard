@@ -10,5 +10,6 @@ namespace MiniBoard.Views.ViewModel
     {
         public Board Board { get; set; }
         public IEnumerable<Reply> Reply { get; set; }
+        public Like Like  { get; set; }
     }
 }

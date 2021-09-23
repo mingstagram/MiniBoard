@@ -38,6 +38,11 @@ namespace MiniBoard.Models
         public int Count { get; set; }
 
         /// <summary>
+        /// 게시물 좋아요
+        /// </summary>
+        public int Like { get; set; }
+
+        /// <summary>
         /// 작성자 번호
         /// </summary>
         [Required]

@@ -14,7 +14,7 @@
         글번호 : <span>@Model.Board.NoteNo</span> | 작성자 : <span>@Model.Board.UserNo</span>
         <span style="float: right;">
             <span id="blike">
-                추천 : @*@Model.Like*@ 0
+                추천 : @Model.Board.Like
             </span> &nbsp; <span>조회수 : @Model.Board.Count </span>&nbsp;
         </span>
     </div>
@@ -27,13 +27,24 @@
     </div>
     <br /> <br /> <br />
     <div style="margin: 10px;">
-        <button type="button" class="btn btn-Light" @*onclick="index.like()"*@ style="border: 1px solid black;">
-            ❤ 공감
-        </button>
-        @*<button type="button" class="btn btn-Light" onclick="index.like()"
-                    style="border: 1px solid black;">
-                🤍 ${board.blike}
-            </button>*@
+
+        @if (Model.Like == null)
+        {
+            <form>
+                <button type="button" class="btn btn-Light" id="btn-like" style="border: 1px solid black;">
+                    ❤ 공감
+                </button>
+            </form>
+        }
+        else
+        {
+            <form>
+                <button type="button" class="btn btn-Light" id="btn-like" style="border: 1px solid black;">
+                    🤍 @Model.Board.Like
+                </button>
+            </form>
+        }
+
     </div>
     <div class="card" style="margin-bottom: 20px;">
         <div class="card">
@@ -78,6 +89,7 @@
 
 
 <script language="javascript" type="text/javascript">
+    // 게시물 댓글
     var reply = document.getElementById("btn-reply-save");
     reply.onclick = function () {
         let data = {
@@ -104,4 +116,34 @@
             console.log(error);
         });
     };
+
+    // 게시물 추천
+    var like = document.getElementById("btn-like");
+    console.log(like);
+    like.onclick = function () {
+        alert(like);
+        let data = {
+            UserNo: parseInt($("#userNo").val()),
+            BoardNo: parseInt($("#boardNo").val())
+        };
+
+        console.log(data);
+
+        $.ajax({
+            method: "POST",
+            url: `/api/Like/Save`,
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(res => {
+            // 성공
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+        }).fail(error => {
+            // 실패
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+            console.log(error);
+        });
+
+    };
+
 </script>

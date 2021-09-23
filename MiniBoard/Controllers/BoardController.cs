@@ -86,14 +86,16 @@ namespace MiniBoard.Controllers
                 }
 
                 // 기존에 한개의 board 모델만 보내는 방식에서
-                // ViewModel을 추가해서 Board모델과 Reply모델을 보내는데 
-                // Reply모델의 경우 board모델과는 달리 IEnumerable<List> 방식으로 보내야하기때문에
+                // ViewModel을 추가해서 Board모델과 Reply모델을 보내는데 (Like 모델도 추가)
+                // Reply모델의 경우 board모델과 Like모델과는 달리 IEnumerable<List> 방식으로 보내야하기때문에
                 // ViewModel을 추가할때 IEnumerable<List>로 설정
                 var board = db.Boards.FirstOrDefault(b => b.NoteNo.Equals(NoteNo));
                 var replyList = db.Replys.ToList().OrderByDescending(r => r.BoardNo).Where(r => r.BoardNo.Equals(NoteNo));
+                var like = db.Likes.FirstOrDefault(l => l.BoardNo.Equals(NoteNo) && l.UserNo.Equals(loginUser));
                 BoardReplyModel boardReply = new BoardReplyModel();
                 boardReply.Board = board;
                 boardReply.Reply = replyList;
+                boardReply.Like = like;
                 return View(boardReply);
             }
         }
@@ -209,5 +211,6 @@ namespace MiniBoard.Controllers
             }
             return RedirectToAction("Index");
         }
+
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniBoard.DataContext;
 
 namespace MiniBoard.Migrations
 {
     [DbContext(typeof(MiniBoardDbContext))]
-    partial class MiniBoardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210923074924_boardLikeAdd")]
+    partial class boardLikeAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
