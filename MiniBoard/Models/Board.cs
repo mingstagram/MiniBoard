@@ -33,6 +33,11 @@ namespace MiniBoard.Models
         public DateTime CreateDate { get; set; }
 
         /// <summary>
+        /// 게시물 조회수
+        /// </summary>
+        public int Count { get; set; }
+
+        /// <summary>
         /// 작성자 번호
         /// </summary>
         [Required]
