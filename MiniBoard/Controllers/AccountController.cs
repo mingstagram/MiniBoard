@@ -75,5 +75,40 @@ namespace MiniBoard.Controllers
             }
             return View(model);
         }
+
+        /// <summary>
+        /// 회원 수정
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Edit()
+        {
+            using (var db = new MiniBoardDbContext())
+            {
+                var user = db.Users.
+                    FirstOrDefault(u => u.UserNo.Equals(HttpContext.Session.GetInt32("USER_LOGIN_KEY")));
+                return View(user);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Edit(User model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var db = new MiniBoardDbContext())
+                {
+                    db.Users.Update(model);
+                    if (db.SaveChanges() > 0)
+                    {
+                        // 수정 성공
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                // 로그인 실패
+                ModelState.AddModelError(string.Empty, "수정 실패");
+            }
+
+            return View(model);
+        }
     }
 }

@@ -1,8 +1,14 @@
 ﻿@model MiniBoard.Views.ViewModel.BoardReplyModel;
+@using Microsoft.AspNetCore.Http
 
 <div class="container card">
     <div class="card-body">
         <a asp-controller="Board" asp-action="Index" class="btn btn-info">돌아가기</a>
+        @if (Context.Session.GetInt32("USER_LOGIN_KEY") == Model.Board.UserNo)
+        {
+            <a asp-controller="Board" asp-action="Edit" asp-route-NoteNo="@Model.Board.NoteNo" class="btn btn-warning">수정</a>
+            <a asp-controller="Board" asp-action="Delete" asp-route-NoteNo="@Model.Board.NoteNo" class="btn btn-danger">삭제</a>
+        }
     </div>
     <div class="card-header">
         글번호 : <span>@Model.Board.NoteNo</span> | 작성자 : <span>@Model.Board.UserNo</span>

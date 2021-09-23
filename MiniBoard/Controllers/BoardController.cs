@@ -145,19 +145,69 @@ namespace MiniBoard.Controllers
         /// 게시물 수정
         /// </summary>
         /// <returns></returns>
-        public IActionResult Edit()
+        public IActionResult Edit(int NoteNo)
         {
-            return View();
+            
+            using (var db = new MiniBoardDbContext())
+            {
+                var board = db.Boards.
+                    FirstOrDefault(b => b.NoteNo.Equals(NoteNo));
+
+                if (HttpContext.Session.GetInt32("USER_LOGIN_KEY") != board.UserNo)
+                {
+                    // 로그인이 안된 상태
+                    return RedirectToAction("Login", "Account");
+                }
+                else
+                {
+                    return View(board);
+                }
+            }
         }
+
+        [HttpPost]
+        public IActionResult Edit(Board model)
+        {
+            if (ModelState.IsValid)
+            {
+                using (var db = new MiniBoardDbContext())
+                {
+                    db.Boards.Update(model);
+                    if (db.SaveChanges() > 0)
+                    {
+                        // 수정 성공
+                        return RedirectToAction("Detail", "Board", new { NoteNo = model.NoteNo});
+                    }
+                }
+                // 로그인 실패
+                ModelState.AddModelError(string.Empty, "수정 실패");
+            }
+
+            return View(model);
+        }
+
 
         /// <summary>
         /// 게시물 삭제
         /// </summary>
         /// <returns></returns>
-        public IActionResult Delete()
+        public IActionResult Delete(int NoteNo)
         {
-            return View();
+            using (var db = new MiniBoardDbContext())
+            {
+                var board = db.Boards.
+                    FirstOrDefault(b => b.NoteNo.Equals(NoteNo));
+                db.Boards.Remove(board);
+                if(db.SaveChanges() > 0)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "수정 실패");
+                }
+            }
+            return RedirectToAction("Index");
         }
-
     }
 }

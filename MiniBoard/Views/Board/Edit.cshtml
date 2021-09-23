@@ -1,5 +1,31 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model MiniBoard.Models.Board
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <form class="form-horizontal" method="post" asp-controller="Board" asp-action="Edit">
+                <input type="hidden" asp-for="UserNo" value="@Model.UserNo" />
+                <input type="hidden" asp-for="NoteNo" value="@Model.NoteNo" />
+                <input type="hidden" asp-for="Count" value="@Model.Count" />
+                <input type="hidden" asp-for="CreateDate" value="@Model.CreateDate" />
+                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" class="form-control" asp-for="NoteTitle" value="@Model.NoteTitle" />
+                    <span class="text-danger" asp-validation-for="NoteTitle"></span>
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea class="form-control trumbowyg-editor" rows="20" asp-for="NoteContents">@Model.NoteContents</textarea>
+                    <span class="text-danger" asp-validation-for="NoteContents"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">저장</button>
+                    <a class="btn btn-warning" asp-controller="Board" asp-action="Index">취소</a>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>
