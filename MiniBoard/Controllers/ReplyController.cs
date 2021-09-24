@@ -37,5 +37,20 @@ namespace MiniBoard.Controllers
 
             return Json(model);
         }
+
+        // GET: api/Reply/Delete?replyNo=${replyNo}
+        [HttpGet("Delete")]
+        public JsonResult Delete(int ReplyNo)
+        {
+            using (var db = new MiniBoardDbContext())
+            {
+                var model = db.Replys.
+                    FirstOrDefault(r => r.ReplyNo.Equals(ReplyNo));
+
+                db.Replys.Remove(model);
+                db.SaveChanges();
+                return Json(model);
+            }
+        }
     }
 }

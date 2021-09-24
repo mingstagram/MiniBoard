@@ -73,10 +73,15 @@
                                 작성자 : @reply.UserName
                                 &nbsp;
                             </div>
-                            <button onclick="index.replyDelete(${board.id}, ${reply.id})"
-                                    class="badge">
-                                삭제
-                            </button>
+                            <input type="hidden" id="replyNo" value="@reply.ReplyNo" />
+                            @if (Context.Session.GetInt32("USER_LOGIN_KEY") == reply.UserNo)
+                            {
+                                <button id="btn-reply-delete"
+                                        class="badge">
+                                    삭제
+                                </button>
+                            }
+
                         </div>
                     </li>
                 }
@@ -89,7 +94,7 @@
 
 
 <script language="javascript" type="text/javascript">
-    // 게시물 댓글
+    // 게시물 댓글 작성 
     var reply = document.getElementById("btn-reply-save");
     reply.onclick = function () {
         let data = {
@@ -112,6 +117,30 @@
         }).fail(error => {
             // 실패
             alert("댓글 작성이 실패했습니다.");
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+            console.log(error);
+        });
+    };
+
+    // 게시물 댓글 삭제
+    var replyDelete = document.getElementById("btn-reply-delete");
+    replyDelete.onclick = function () {
+        let data = {
+            ReplyNo: parseInt($("#replyNo").val()),
+            BoardNo: parseInt($("#boardNo").val())
+        };
+        console.log(data);
+
+        $.ajax({
+            method: "GET",
+            url: `/api/Reply/Delete?replyNo=${data.ReplyNo}`,
+        }).done(res => {
+            // 성공
+            alert("댓글 삭제 성공!");
+            location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
+        }).fail(error => {
+            // 실패
+            alert("댓글 삭제 실패!");
             location.href = `/Board/Detail?NoteNo=${data.BoardNo}`;
             console.log(error);
         });
