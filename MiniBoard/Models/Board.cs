@@ -43,6 +43,11 @@ namespace MiniBoard.Models
         public int Like { get; set; }
 
         /// <summary>
+        /// 작성자 이름
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
         /// 작성자 번호
         /// </summary>
         [Required]

@@ -18,12 +18,17 @@ namespace MiniBoard.Controllers
         [HttpPost("Save")]
         public JsonResult Save(Reply model)
         {
-            model.CreateDate = DateTime.Now;
+            
 
             if (ModelState.IsValid)
             {
                 using (var db = new MiniBoardDbContext())
                 {
+                    // 작성자
+                    var writeUser = db.Users.
+                        FirstOrDefault(u => u.UserNo.Equals(HttpContext.Session.GetInt32("USER_LOGIN_KEY")));
+                    model.UserName = writeUser.UserName;
+                    model.CreateDate = DateTime.Now;
                     db.Replys.Add(model);
                     db.SaveChanges();
                 }

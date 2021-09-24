@@ -39,7 +39,6 @@ namespace MiniBoard.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-
             using (var db = new MiniBoardDbContext())
             {
                 int pageSize = 5;
@@ -123,13 +122,19 @@ namespace MiniBoard.Controllers
                 // 로그인이 안된 상태
                 return RedirectToAction("Login", "Account");
             }
-            model.UserNo = int.Parse(HttpContext.Session.GetInt32("USER_LOGIN_KEY").ToString());
-            model.CreateDate = DateTime.Now;
+            
 
             if (ModelState.IsValid)
             {
                 using (var db = new MiniBoardDbContext())
                 {
+                    // 작성자
+                    var writeUser = db.Users.
+                        FirstOrDefault(u => u.UserNo.Equals(HttpContext.Session.GetInt32("USER_LOGIN_KEY")));
+                    model.UserNo = int.Parse(HttpContext.Session.GetInt32("USER_LOGIN_KEY").ToString());
+                    model.CreateDate = DateTime.Now;
+                    model.UserName = writeUser.UserName;
+
                     db.Boards.Add(model);
 
                     if(db.SaveChanges() > 0)

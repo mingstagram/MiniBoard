@@ -34,7 +34,7 @@
                         @*http://www.example.com/Board/Detail?noteNo=1*@
                         <a asp-controller="Board" asp-action="Detail" asp-route-NoteNo="@board.NoteNo">@board.NoteTitle</a>
                     </td>
-                    <td>@board.UserNo</td>
+                    <td>@board.UserName</td>
                     <td>@board.CreateDate</td>
                 </tr>
             }

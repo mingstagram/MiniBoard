@@ -27,6 +27,11 @@ namespace MiniBoard.Models
         public DateTime CreateDate { get; set; }
 
         /// <summary>
+        /// 댓글 작성한 작성자 이름
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
         /// 댓글 작성한 게시물 번호
         /// </summary>
         [Required]

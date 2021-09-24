@@ -11,7 +11,7 @@
         }
     </div>
     <div class="card-header">
-        글번호 : <span>@Model.Board.NoteNo</span> | 작성자 : <span>@Model.Board.UserNo</span>
+        글번호 : <span>@Model.Board.NoteNo</span> | 작성자 : <span>@Model.Board.UserName</span>
         <span style="float: right;">
             <span id="blike">
                 추천 : @Model.Board.Like
@@ -70,7 +70,7 @@
                         <div>@reply.ReplyContents</div>
                         <div class="d-flex">
                             <div class="font-italic">
-                                작성자 : @reply.UserNo
+                                작성자 : @reply.UserName
                                 &nbsp;
                             </div>
                             <button onclick="index.replyDelete(${board.id}, ${reply.id})"
@@ -121,7 +121,6 @@
     var like = document.getElementById("btn-like");
     console.log(like);
     like.onclick = function () {
-        alert(like);
         let data = {
             UserNo: parseInt($("#userNo").val()),
             BoardNo: parseInt($("#boardNo").val())

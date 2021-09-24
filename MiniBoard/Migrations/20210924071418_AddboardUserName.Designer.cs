@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniBoard.DataContext;
 
 namespace MiniBoard.Migrations
 {
     [DbContext(typeof(MiniBoardDbContext))]
-    partial class MiniBoardDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210924071418_AddboardUserName")]
+    partial class AddboardUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,9 +91,6 @@ namespace MiniBoard.Migrations
 
                     b.Property<string>("ReplyContents")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserNo")
